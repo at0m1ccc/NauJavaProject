@@ -1,26 +1,48 @@
 package ru.tatarinov.NauJava.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
-@Getter
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "books")
+@Getter @Setter
 public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String title;
-    private String author;
-    private boolean isAvailable;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    private Author author;
+
+    @Column(unique = true)
     private String isbn;
+
+    @Column(name = "publication_year")
+    private Integer publicationYear;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookCopy> copies = new ArrayList<>();
 
     public Book() {
     }
 
-    public Book(Long id, String title, String author, boolean isAvailable, String isbn) {
-        this.id = id;
+    public Book(String title, Author author, String isbn, Integer publicationYear) {
         this.title = title;
         this.author = author;
-        this.isAvailable = isAvailable;
         this.isbn = isbn;
+        this.publicationYear = publicationYear;
     }
 
     @Override
@@ -28,9 +50,9 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", isAvailable=" + isAvailable +
+                ", author=" + (author != null ? author.getName() : "null") +
                 ", isbn='" + isbn + '\'' +
+                ", publicationYear=" + publicationYear +
                 '}';
     }
 }

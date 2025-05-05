@@ -22,5 +22,5 @@ public interface LibraryService {
 
     List<Book> findAvailableBooks();
 
-    List<Book> findByAuthor(String author);
+    List<Book> findByAuthorName(String authorName);
 }

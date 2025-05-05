@@ -21,5 +21,4 @@ public class AppConfig {
         log.info("Application: {}", appName);
         log.info("Version: {}", appVersion);
     }
-
 }
