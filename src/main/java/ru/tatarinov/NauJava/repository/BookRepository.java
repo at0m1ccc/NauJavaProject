@@ -2,11 +2,13 @@ package ru.tatarinov.NauJava.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 import ru.tatarinov.NauJava.entity.Book;
 
 import java.util.List;
 
+@RepositoryRestResource(path = "books")
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
     // Метод поиска по названию и году публикации (использует Query Lookup Strategies)
