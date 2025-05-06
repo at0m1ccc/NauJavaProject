@@ -22,6 +22,7 @@ public class Author {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String country;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)

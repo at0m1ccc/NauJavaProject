@@ -23,6 +23,7 @@ public class BookCopy {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    @Column
     private boolean available = true;
 
     @OneToMany(mappedBy = "bookCopy")
