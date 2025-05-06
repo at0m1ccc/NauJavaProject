@@ -1,5 +1,6 @@
 package ru.tatarinov.NauJava.db;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.tatarinov.NauJava.entity.Book;
 
@@ -10,10 +11,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class BookRepository {
-    private final List<Book> books = new ArrayList<>();
+    private final ArrayList<Book> books;
     private final AtomicLong idGenerator = new AtomicLong(1);
 
-    public BookRepository() {
+    @Autowired
+    public BookRepository(ArrayList<Book> bookContainer) {
+        books = bookContainer;
         // Инициализация тестовыми данными
         insert(new Book(null, "Война и мир", "Лев Толстой", true, "978-5-389-06256-6"));
         insert(new Book(null, "Преступление и наказание", "Фёдор Достоевский", true, "978-5-17-090831-7"));
