@@ -1,5 +1,6 @@
 package ru.tatarinov.NauJava.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -27,4 +28,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT b FROM Book b WHERE b.title = :title")
     List<Book> findByTitle(String title);
+
+    @EntityGraph(attributePaths = {"author"})
+    @Query("SELECT b FROM Book b")
+    List<Book> findAllWithAuthor();
 }
