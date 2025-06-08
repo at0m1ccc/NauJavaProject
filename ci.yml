@@ -1,0 +1,67 @@
+name: Full CI Pipeline
+
+on: [push, pull_request]
+
+env:
+  MAVEN_OPTS: -Djava.security.egd=file:/dev/./urandom
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+  build-and-test:
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: temurin
+          cache: 'maven'
+
+      - name: Run unit tests
+        run: mvn -B test
+
+      - name: Run integration tests
+        run: mvn -B verify -Pintegration-tests
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: target/surefire-reports/
+
+  docker-build:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          tags: nau-java:ci-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
